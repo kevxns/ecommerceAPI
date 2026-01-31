@@ -3,6 +3,7 @@ package dev.keven.ecommerce.common.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
@@ -28,7 +29,7 @@ public class GlobalHandlerException {
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> HandleUserNotFound(UserNotFoundException e) {
-        ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
         return ResponseEntity.status(response.status).body(response);
     }
 
@@ -46,6 +47,24 @@ public class GlobalHandlerException {
 
     @ExceptionHandler(ProductAlreadyExistsException.class)
     public ResponseEntity<ErrorResponse> handleProductAlreadyExists(ProductAlreadyExistsException e) {
+        ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(response.status).body(response);
+    }
+
+    @ExceptionHandler(UserNullException.class)
+    public ResponseEntity<ErrorResponse> handleUserNull(UserNullException e) {
+        ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(response.status).body(response);
+    }
+
+    @ExceptionHandler(OrderInvalidStatusException.class)
+    public ResponseEntity<ErrorResponse> handleInvalidStatus(OrderInvalidStatusException e) {
+        ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(response.status).body(response);
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<ErrorResponse> handleIllegalArgument(IllegalArgumentException e) {
         ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(response.status).body(response);
     }
