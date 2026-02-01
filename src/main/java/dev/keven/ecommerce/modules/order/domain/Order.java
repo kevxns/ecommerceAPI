@@ -1,5 +1,8 @@
 package dev.keven.ecommerce.modules.order.domain;
 
+import dev.keven.ecommerce.common.exception.OrderInvalidStatusException;
+import dev.keven.ecommerce.common.exception.UserNullException;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -12,6 +15,15 @@ public class Order {
     private BigDecimal totalPrice;
     private List<OrderItem> items;
     private LocalDateTime createdAt;
+
+    public Order(Long userId) {
+        if (userId == null) throw new UserNullException("userId is null");
+        this.userId = userId;
+        this.status = OrderStatus.CREATED;
+        this.items = new ArrayList<>();
+        this.totalPrice = BigDecimal.ZERO;
+        this.createdAt = LocalDateTime.now();
+    }
 
     public Order() {}
 
@@ -49,7 +61,7 @@ public class Order {
     }
 
     public void cancel() {
-        if (status == OrderStatus.CANCELED) throw new IllegalArgumentException("order is already canceled");
+        if (status == OrderStatus.CANCELED) throw new OrderInvalidStatusException("order is already canceled");
     }
 
     private void recalculateTotal() {
@@ -60,7 +72,7 @@ public class Order {
 
     private void ensureEditable() {
         if (status != OrderStatus.CREATED) {
-            throw new IllegalStateException("only orders in CREATED status can be modified");
+            throw new OrderInvalidStatusException("only orders in CREATED status can be modified");
         }
     }
 
