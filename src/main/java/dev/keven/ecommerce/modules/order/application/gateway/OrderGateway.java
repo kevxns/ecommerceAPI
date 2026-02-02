@@ -6,4 +6,5 @@ import java.util.Optional;
 public interface OrderGateway {
     Order save(Order order);
     Optional<Order> findById(Long id);
+    void deleteById(Long id);
 }
