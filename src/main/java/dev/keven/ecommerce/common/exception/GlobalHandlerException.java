@@ -68,4 +68,10 @@ public class GlobalHandlerException {
         ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST);
         return ResponseEntity.status(response.status).body(response);
     }
+
+    @ExceptionHandler(OrderNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleOrderNotFound(OrderNotFoundException e) {
+        ErrorResponse response = new ErrorResponse(e.getMessage(), HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(response.status).body(response);
+    }
 }

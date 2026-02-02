@@ -1,5 +1,10 @@
 package dev.keven.ecommerce.common.config;
 
+import dev.keven.ecommerce.modules.order.application.gateway.OrderGateway;
+import dev.keven.ecommerce.modules.order.application.usecase.*;
+import dev.keven.ecommerce.modules.order.infrastructure.adapter.OrderAdapter;
+import dev.keven.ecommerce.modules.order.infrastructure.persistence.repository.OrderRepository;
+import dev.keven.ecommerce.modules.order.presentation.mapper.OrderEntityMapper;
 import dev.keven.ecommerce.modules.product.application.gateway.ProductGateway;
 import dev.keven.ecommerce.modules.product.application.usecase.CreateProductUseCase;
 import dev.keven.ecommerce.modules.product.application.usecase.DeleteProductUseCase;
@@ -66,5 +71,40 @@ public class BeanConfig {
     @Bean
     UserGateway userGateway(UserRepository userRepository, UserEntityMapper userEntityMapper) {
         return new UserAdapter(userRepository, userEntityMapper);
+    }
+
+    @Bean
+    AddItemToOrderUseCase addItemToOrderUseCase(OrderGateway orderGateway) {
+        return new AddItemToOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    CancelOrderUseCase cancelOrderUseCase(OrderGateway orderGateway) {
+        return new CancelOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    ConfirmOrderUseCase confirmOrderUseCase(OrderGateway orderGateway) {
+        return new ConfirmOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    CreateOrderUseCase createOrderUseCase(OrderGateway orderGateway) {
+        return new CreateOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    DeleteOrderUseCase deleteOrderUseCase(OrderGateway orderGateway) {
+        return new DeleteOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    RemoveItemFromOrderUseCase removeItemFromOrderUseCase(OrderGateway orderGateway) {
+        return new RemoveItemFromOrderUseCase(orderGateway);
+    }
+
+    @Bean
+    OrderGateway orderGateway(OrderRepository repository, OrderEntityMapper entityMapper) {
+        return new OrderAdapter(repository, entityMapper);
     }
 }
