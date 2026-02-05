@@ -9,4 +9,5 @@ public interface ProductGateway {
     Optional<Product> findById(Long id);
     void deleteById(Long id);
     boolean existsByName(String name);
+    boolean existsById(Long id);
 }
