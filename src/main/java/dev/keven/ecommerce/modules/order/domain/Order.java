@@ -56,12 +56,13 @@ public class Order {
     }
 
     public void confirm() {
+        if (status != OrderStatus.CREATED) throw new OrderInvalidStatusException("only orders with status CREATED can be confirmed");
         if (items.isEmpty()) throw new IllegalArgumentException("cannot confirm an empty order");
         this.status = OrderStatus.CONFIRMED;
     }
 
     public void cancel() {
-        if (status == OrderStatus.CANCELED) throw new OrderInvalidStatusException("order is already canceled");
+        if (status != OrderStatus.CREATED) throw new OrderInvalidStatusException("only orders with status CREATED can be canceled");
         this.status = OrderStatus.CANCELED;
     }
 
