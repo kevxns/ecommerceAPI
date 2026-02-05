@@ -1,9 +1,10 @@
 package dev.keven.ecommerce.modules.order.application.usecase;
 
+import dev.keven.ecommerce.common.exception.OrderNotFoundException;
+import dev.keven.ecommerce.modules.order.application.command.CancelOrderCommand;
 import dev.keven.ecommerce.modules.order.application.gateway.OrderGateway;
+import dev.keven.ecommerce.modules.order.application.result.CancelOrderResult;
 import dev.keven.ecommerce.modules.order.domain.Order;
-import dev.keven.ecommerce.modules.order.presentation.dto.request.CancelOrderRequest;
-import dev.keven.ecommerce.modules.order.presentation.dto.response.CancelOrderResponse;
 
 public class CancelOrderUseCase {
 
@@ -13,15 +14,15 @@ public class CancelOrderUseCase {
         this.orderGateway = orderGateway;
     }
 
-    public CancelOrderResponse execute(CancelOrderRequest request) {
-        Order order = orderGateway.findById(request.orderId())
-                .orElseThrow(() -> new RuntimeException("Order not found"));
+    public CancelOrderResult execute(CancelOrderCommand command) {
+        Order order = orderGateway.findById(command.orderId())
+                .orElseThrow(() -> new OrderNotFoundException("Order not found"));
 
         order.cancel();
 
         Order updated = orderGateway.save(order);
 
-        return new CancelOrderResponse(
+        return new CancelOrderResult(
                 updated.getId(),
                 updated.getStatus().name()
         );
