@@ -57,4 +57,11 @@ public class ProductAdapter implements ProductGateway {
         if (product.isPresent()) return true;
         return false;
     }
+
+    @Override
+    public boolean existsById(Long id) {
+        Optional<ProductEntity> product = repository.findById(id);
+        if (product.isPresent()) return true;
+        return false;
+    }
 }
