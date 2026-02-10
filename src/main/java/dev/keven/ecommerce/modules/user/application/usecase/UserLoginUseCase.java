@@ -30,7 +30,8 @@ public class UserLoginUseCase {
         }
 
         String token = authService.generateToken(user);
+        String refreshToken = authService.refreshToken(user);
 
-        return new UserLoginResponse(token);
+        return new UserLoginResponse(token, refreshToken);
     }
 }
