@@ -4,6 +4,8 @@ import dev.keven.ecommerce.modules.user.domain.User;
 import dev.keven.ecommerce.modules.user.infrastructure.persistence.entity.UserEntity;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
+
 @Component
 public class UserEntityMapper {
 
@@ -27,7 +29,7 @@ public class UserEntityMapper {
                 entity.getLastName(),
                 entity.getEmail(),
                 entity.getPassword(),
-                entity.getRoles()
+                entity.getRoles() != null ? new HashSet<>(entity.getRoles()) : new HashSet<>()
         );
     }
 }
