@@ -13,6 +13,7 @@ import dev.keven.ecommerce.modules.product.application.usecase.UpdateProductUseC
 import dev.keven.ecommerce.modules.product.infrastructure.adapter.ProductAdapter;
 import dev.keven.ecommerce.modules.product.infrastructure.persistence.repository.ProductRepository;
 import dev.keven.ecommerce.modules.product.presentation.mapper.ProductEntityMapper;
+import dev.keven.ecommerce.modules.user.application.usecase.RefreshTokenUseCase;
 import dev.keven.ecommerce.modules.user.application.usecase.UserLoginUseCase;
 import dev.keven.ecommerce.modules.user.application.usecase.UserRegisterUseCase;
 import dev.keven.ecommerce.modules.user.application.gateway.UserGateway;
@@ -21,6 +22,7 @@ import dev.keven.ecommerce.modules.user.infrastructure.persistence.repository.Us
 import dev.keven.ecommerce.modules.user.presentation.mapper.UserEntityMapper;
 import dev.keven.ecommerce.security.auth.AuthService;
 import dev.keven.ecommerce.security.hash.PasswordHashService;
+import dev.keven.ecommerce.security.jwt.JwtProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -111,5 +113,10 @@ public class BeanConfig {
     @Bean
     OrderGateway orderGateway(OrderRepository repository, OrderEntityMapper entityMapper) {
         return new OrderAdapter(repository, entityMapper);
+    }
+
+    @Bean
+    RefreshTokenUseCase refreshTokenUseCase(UserGateway userGateway, JwtProvider jwtProvider) {
+        return new RefreshTokenUseCase(userGateway, jwtProvider);
     }
 }
