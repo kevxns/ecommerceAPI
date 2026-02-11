@@ -91,8 +91,8 @@ public class BeanConfig {
     }
 
     @Bean
-    CreateOrderUseCase createOrderUseCase(OrderGateway orderGateway) {
-        return new CreateOrderUseCase(orderGateway);
+    CreateOrderUseCase createOrderUseCase(OrderGateway orderGateway, ProductGateway productGateway) {
+        return new CreateOrderUseCase(orderGateway, productGateway);
     }
 
     @Bean
