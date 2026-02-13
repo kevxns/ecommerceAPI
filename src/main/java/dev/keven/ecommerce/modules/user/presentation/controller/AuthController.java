@@ -7,6 +7,8 @@ import dev.keven.ecommerce.modules.user.presentation.dto.request.UserLoginReques
 import dev.keven.ecommerce.modules.user.presentation.dto.request.UserRegisterRequest;
 import dev.keven.ecommerce.modules.user.presentation.dto.response.UserLoginResponse;
 import dev.keven.ecommerce.modules.user.presentation.dto.response.UserRegisterResponse;
+import dev.keven.ecommerce.modules.user.presentation.mapper.UserRequestMapper;
+import dev.keven.ecommerce.modules.user.presentation.mapper.UserResponseMapper;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,14 +31,18 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody @Valid UserRegisterRequest request) {
-        UserRegisterResponse response = userRegisterUseCase.execute(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        var result = userRegisterUseCase.execute(
+                UserRequestMapper.toCommand(request)
+        );
+        return ResponseEntity.status(HttpStatus.CREATED).body(UserResponseMapper.toResponse(result));
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest request) {
-        UserLoginResponse response = userLoginUseCase.execute(request);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        var result = userLoginUseCase.execute(
+                UserRequestMapper.toCommand(request)
+        );
+        return ResponseEntity.status(HttpStatus.OK).body(UserResponseMapper.toResponse(result));
     }
 
     @PostMapping("/refresh")
