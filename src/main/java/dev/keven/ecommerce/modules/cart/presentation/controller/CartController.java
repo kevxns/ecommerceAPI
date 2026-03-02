@@ -12,6 +12,9 @@ import dev.keven.ecommerce.modules.cart.presentation.dto.response.CheckoutCartRe
 import dev.keven.ecommerce.modules.cart.presentation.mapper.CartRequestMapper;
 import dev.keven.ecommerce.modules.cart.presentation.mapper.CartResponseMapper;
 import dev.keven.ecommerce.security.auth.AuthenticatedUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/cart")
 @PreAuthorize("hasAuthority('CUSTOMER')")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Cart", description = "Operacoes do carrinho do cliente")
 public class CartController {
 
     private final GetCartUseCase getCartUseCase;
@@ -47,6 +52,7 @@ public class CartController {
     }
 
     @GetMapping
+    @Operation(summary = "Obter carrinho", description = "Retorna o carrinho ativo do usuario autenticado.")
     public ResponseEntity<CartResponse> getCart() {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         var result = getCartUseCase.execute(CartRequestMapper.toGetCommand(authenticatedUserId));
@@ -54,6 +60,7 @@ public class CartController {
     }
 
     @PostMapping("/items")
+    @Operation(summary = "Adicionar item", description = "Adiciona item ao carrinho ativo.")
     public ResponseEntity<CartResponse> addItem(@RequestBody @Valid AddItemToCartRequest request) {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         var result = addItemToCartUseCase.execute(CartRequestMapper.toAddItemCommand(authenticatedUserId, request));
@@ -61,6 +68,7 @@ public class CartController {
     }
 
     @PatchMapping("/items/{productId}")
+    @Operation(summary = "Atualizar item", description = "Atualiza quantidade de um item do carrinho.")
     public ResponseEntity<CartResponse> updateItem(@PathVariable Long productId, @RequestBody @Valid UpdateCartItemRequest request) {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         var result = updateCartItemUseCase.execute(
@@ -70,6 +78,7 @@ public class CartController {
     }
 
     @DeleteMapping("/items/{productId}")
+    @Operation(summary = "Remover item", description = "Remove item do carrinho.")
     public ResponseEntity<Void> removeItem(@PathVariable Long productId) {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         removeItemFromCartUseCase.execute(
@@ -79,6 +88,7 @@ public class CartController {
     }
 
     @PostMapping("/checkout")
+    @Operation(summary = "Checkout", description = "Finaliza o carrinho e confirma o pedido.")
     public ResponseEntity<CheckoutCartResponse> checkout() {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         var result = checkoutCartUseCase.execute(CartRequestMapper.toCheckoutCommand(authenticatedUserId));
