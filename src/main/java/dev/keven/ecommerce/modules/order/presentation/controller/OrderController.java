@@ -6,6 +6,9 @@ import dev.keven.ecommerce.modules.order.application.usecase.*;
 import dev.keven.ecommerce.modules.order.presentation.dto.response.*;
 import dev.keven.ecommerce.modules.order.presentation.mapper.OrderResponseMapper;
 import dev.keven.ecommerce.security.auth.AuthenticatedUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -16,6 +19,8 @@ import java.time.LocalDate;
 
 @RestController
 @RequestMapping("/api/v1/orders")
+@Tag(name = "Orders", description = "Operacoes de pedidos do cliente")
+@SecurityRequirement(name = "bearerAuth")
 public class OrderController {
 
     private final CancelOrderUseCase cancelOrderUseCase;
@@ -37,6 +42,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping
+    @Operation(summary = "Listar pedidos", description = "Lista pedidos do usuario autenticado com filtros opcionais.")
     public ResponseEntity<GetOrdersResponse> getOrders(
             @RequestParam(required = false) OrderStatus status,
             @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate from,
@@ -54,6 +60,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @PostMapping("/{id}/cancel")
+    @Operation(summary = "Cancelar pedido", description = "Cancela um pedido em status permitido.")
     public ResponseEntity<CancelOrderResponse> cancelOrder(@PathVariable Long id) {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         var result = cancelOrderUseCase.execute(
@@ -65,6 +72,7 @@ public class OrderController {
 
     @PreAuthorize("hasAuthority('CUSTOMER')")
     @GetMapping("/{id}")
+    @Operation(summary = "Detalhar pedido", description = "Busca um pedido do usuario autenticado pelo ID.")
     public ResponseEntity<GetOrderResponse> getOrderById(@PathVariable Long id) {
         Long authenticatedUserId = authenticatedUserService.getAuthenticatedUserId();
         var result = getOrderByIdUseCase.execute(
