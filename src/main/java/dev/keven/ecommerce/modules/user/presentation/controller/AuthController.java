@@ -9,6 +9,8 @@ import dev.keven.ecommerce.modules.user.presentation.dto.response.UserLoginRespo
 import dev.keven.ecommerce.modules.user.presentation.dto.response.UserRegisterResponse;
 import dev.keven.ecommerce.modules.user.presentation.mapper.UserRequestMapper;
 import dev.keven.ecommerce.modules.user.presentation.mapper.UserResponseMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
+@Tag(name = "Auth", description = "Autenticacao e gestao de token")
 public class AuthController {
 
     private final UserLoginUseCase userLoginUseCase;
@@ -30,6 +33,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Registrar usuario", description = "Cria um novo usuario com perfil CUSTOMER.")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody @Valid UserRegisterRequest request) {
         var result = userRegisterUseCase.execute(
                 UserRequestMapper.toCommand(request)
@@ -38,6 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login", description = "Autentica um usuario e retorna access token e refresh token.")
     public ResponseEntity<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest request) {
         var result = userLoginUseCase.execute(
                 UserRequestMapper.toCommand(request)
@@ -46,6 +51,7 @@ public class AuthController {
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "Atualizar token", description = "Gera um novo access token a partir do refresh token.")
     public ResponseEntity<UserLoginResponse> refresh(@RequestHeader("Authorization") String authorization) {
         String refreshToken = authorization.replace("Bearer ", "");
         UserLoginResponse response = refreshTokenUseCase.execute(refreshToken);

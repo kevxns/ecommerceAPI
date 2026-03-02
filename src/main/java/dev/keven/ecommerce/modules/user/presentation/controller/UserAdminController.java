@@ -10,6 +10,9 @@ import dev.keven.ecommerce.modules.user.presentation.dto.response.GetUsersRespon
 import dev.keven.ecommerce.modules.user.presentation.dto.response.UpdateUserRolesResponse;
 import dev.keven.ecommerce.modules.user.presentation.mapper.UserRequestMapper;
 import dev.keven.ecommerce.modules.user.presentation.mapper.UserResponseMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,8 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/admin/users")
 @PreAuthorize("hasAuthority('ADMIN')")
+@SecurityRequirement(name = "bearerAuth")
+@Tag(name = "Admin Users", description = "Operacoes administrativas de usuarios")
 public class UserAdminController {
 
     private final GetUsersUseCase getUsersUseCase;
@@ -36,6 +41,7 @@ public class UserAdminController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar usuarios", description = "Lista usuarios com filtros de email e role.")
     public ResponseEntity<GetUsersResponse> getUsers(
             @RequestParam(required = false) String email,
             @RequestParam(required = false) UserRole role,
@@ -50,12 +56,14 @@ public class UserAdminController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Detalhar usuario", description = "Busca um usuario por ID.")
     public ResponseEntity<GetUserResponse> getUserById(@PathVariable Long id) {
         var result = getUserByIdUseCase.execute(UserRequestMapper.toGetUserByIdCommand(id));
         return ResponseEntity.status(HttpStatus.OK).body(UserResponseMapper.toResponse(result));
     }
 
     @PatchMapping("/{id}/roles")
+    @Operation(summary = "Atualizar roles", description = "Atualiza os perfis de um usuario.")
     public ResponseEntity<UpdateUserRolesResponse> updateUserRoles(
             @PathVariable Long id,
             @RequestBody @Valid UpdateUserRolesRequest request
