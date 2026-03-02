@@ -15,6 +15,9 @@ import dev.keven.ecommerce.modules.product.presentation.dto.response.ListProduct
 import dev.keven.ecommerce.modules.product.presentation.dto.response.UpdateProductResponse;
 import dev.keven.ecommerce.modules.product.presentation.mapper.ProductRequestMapper;
 import dev.keven.ecommerce.modules.product.presentation.mapper.ProductResponseMapper;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +29,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/products")
+@Tag(name = "Products", description = "Catalogo de produtos")
 public class ProductController {
 
     private final CreateProductUseCase createProductUseCase;
@@ -50,6 +54,8 @@ public class ProductController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PostMapping("/create")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Criar produto", description = "Cria um novo produto (ADMIN).")
     public ResponseEntity<CreateProductResponse> create(@RequestBody @Valid CreateProductRequest request) {
         var result = createProductUseCase.execute(
                 ProductRequestMapper.toCommand(request)
@@ -58,6 +64,7 @@ public class ProductController {
     }
 
     @GetMapping
+    @Operation(summary = "Listar produtos", description = "Lista produtos com filtros opcionais.")
     public ResponseEntity<ListProductsResponse> listProducts(
             @RequestParam(required = false) String q,
             @RequestParam(required = false) ProductStatus status,
@@ -79,6 +86,7 @@ public class ProductController {
     }
 
     @GetMapping("/{id}")
+    @Operation(summary = "Detalhar produto", description = "Busca um produto por ID.")
     public ResponseEntity<GetProductResponse> getProductById(@PathVariable Long id) {
         var result = getProductByIdUseCase.execute(
                 ProductRequestMapper.toGetByIdCommand(id)
@@ -93,6 +101,8 @@ public class ProductController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @DeleteMapping("/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Desativar produto", description = "Desativa um produto pelo ID (ADMIN).")
     public ResponseEntity<Void> deleteProductById(@PathVariable Long id) {
         deleteProductUseCase.execute(
                 ProductRequestMapper.toDeleteCommand(id)
@@ -102,6 +112,8 @@ public class ProductController {
 
     @PreAuthorize("hasAuthority('ADMIN')")
     @PutMapping("/update/{id}")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Atualizar produto", description = "Atualiza dados de um produto (ADMIN).")
     public ResponseEntity<UpdateProductResponse> update(@PathVariable Long id, @RequestBody @Valid UpdateProductRequest request) {
         var result = updateProductUseCase.execute(
                 ProductRequestMapper.toCommand(id, request)
