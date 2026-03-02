@@ -21,3 +21,8 @@ spring:
   flyway:
     enabled: true
 
+springdoc:
+  swagger-ui:
+    enabled: false
+  scalar:
+    path: /scalar
