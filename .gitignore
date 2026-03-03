@@ -1,6 +1,7 @@
 ### Maven ###
 target/
 .mvn/wrapper/maven-wrapper.jar
+.m2
 
 ### Build (Gradle / outros) ###
 build/
