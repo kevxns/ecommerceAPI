@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  ci:
+    name: CI
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: ecommerce
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d ecommerce"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 6
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Lint
+        run: ./mvnw -B -ntp -DskipTests -Dmaven.compiler.showWarnings=true -Dmaven.compiler.failOnWarning=true test-compile
+
+      - name: Test and Build
+        env:
+          DB_URL: jdbc:postgresql://localhost:5432/ecommerce
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+          AUTH_SECRET_TOKEN: ${{ secrets.CI_AUTH_SECRET_TOKEN || format('ci-fallback-{0}-{1}', github.run_id, github.run_attempt) }}
+          TOKEN_EXPIRATION: "1"
+          REFRESH_TOKEN_EXPIRATION: "8"
+        run: ./mvnw -B -ntp verify
